@@ -1,6 +1,15 @@
-import FetchNews from './components/js/fetchNews';
-import RenderNews from './components/js/renderNews';
+import './js/dark-light_theme';
+import './js/categories';
+import './js/weather';
+import './js/mobile-menu';
+import './js/localStorage';
+import FetchNews from './js/fetchNews';
+import RenderNews from './js/renderNews';
+import Weather from './js/weather';
+import LocalStorageClass from './js/localStorage';
 
+
+  
 const mobileScreenSize = window.matchMedia(
   'screen and (max-width: 767px)'
 ).matches;
@@ -11,47 +20,51 @@ const desktopScreenSize = window.matchMedia(
   'screen and (min-width: 1280px)'
 ).matches;
 
+
+const currentMonthYear = document.querySelector('.current-date');
+const localStorageEntity = new LocalStorageClass();
+const weather = new Weather();                   
 const renderNews = new RenderNews();
 const fetchNews = new FetchNews();
-const newsList = document.querySelector('.news-list');
-const searchForm = document.querySelector('.search-form');
+const newsList = document.querySelector('.list-news');
+const searchForm = document.querySelector('.search-field');
 const prevPage = document.querySelector('.prev__page');
 const nextPage = document.querySelector('.next__page');
-const categoriesList = document.querySelector('.categories__list');
-const otherCategoriesBtn = document.querySelector('.other-categories__button');
-const otherCategoriesThumb = document.querySelector('.other-categories__thumb');
-const weather = document.querySelector('.weather');
+const categoriesList = document.querySelector('.category__list-bt');
+const otherCategoryBtn = document.querySelector('.category__item-bt-arrow');
+const otherCategoriesThumb = document.querySelector('.filter-category__list');
+const otherCategoryContainer = document.querySelector(
+  '.category__others-container'
+);
+const chooseDate = document.querySelector('.days');
 
+chooseDate.addEventListener('click', onChooseDateClick)
 categoriesList.addEventListener('click', onCategoryClick);
 otherCategoriesThumb.addEventListener('click', onCategoryClick);
-otherCategoriesBtn.addEventListener('click', onOtherCategoriesClick);
 prevPage.addEventListener('click', onPrevBtnClick);
 nextPage.addEventListener('click', onNextBtnClick);
 searchForm.addEventListener('submit', onFormSubmit);
-document.addEventListener('click', onDocumentClick);
+newsList.addEventListener(
+  'click',
+  localStorageEntity.onAddToFavoriteClick.bind(localStorageEntity)
+);
+newsList.addEventListener(
+  'click',
+  localStorageEntity.onReadMoreClick.bind(localStorageEntity)
+);
+
 
 
 // --------------------------------------------- вызовы функций при первой загрузке ---------------------------------------------
+      
+onPageLoad();
 
-fetchNews
-  .fetchNewsByMostPopular()
-  .then(result => renderNews.renderPopularNews(result.results, newsList))
-  .catch(error => console.log(error));
 
 getCategoriesList();
 
 
 // ---------------------------------------------------------------------------------------------------------------------------------------
 
-function onOtherCategoriesClick() {
-  otherCategoriesThumb.classList.toggle('is-hidden');
-}
-
-function onDocumentClick(e) {
-  if (e.target !== otherCategoriesThumb && e.target !== otherCategoriesBtn) {
-    otherCategoriesThumb.classList.add('is-hidden');
-  }
-}
 
 async function onPrevBtnClick() {
   if (searchForm.elements.searchQuery.value !== '') {
@@ -180,10 +193,13 @@ async function getCategoriesList() {
     );
   }
   for (let j = 6; j <= 49; j += 1) {
-    const otherCategoryElem = document.createElement('button');
-    otherCategoryElem.classList.add('other-category__item');
-    otherCategoryElem.textContent = `${categoriesArr[j]['display_name']}`;
-    otherCategoryElem.setAttribute(
+      const otherCategoryElem = document.createElement('li');
+      const otherCategoryBtn = document.createElement('button');
+      otherCategoryElem.classList.add('filter-category__item');
+      otherCategoryBtn.classList.add('filter-category__button');
+      otherCategoryElem.append(otherCategoryBtn);
+    otherCategoryBtn.textContent = `${categoriesArr[j]['display_name']}`;
+    otherCategoryBtn.setAttribute(
       'name',
       `${categoriesArr[j]['display_name']}`
     );
@@ -193,3 +209,114 @@ async function getCategoriesList() {
 
 
 
+
+async function onPageLoad() {
+ await weather
+    .getWeather(weather.latitude, weather.longitude)
+    .then(response => {
+      weather.renderWeatherElement(response);
+      renderNews.weatherMarkup = weather.markup;
+    })
+    .catch(error => console.log(error));
+
+  
+fetchNews
+    .fetchNewsByMostPopular()
+  .then(result => {
+    console.log(result.results)
+    renderNews.renderPopularNews(result.results, newsList);
+    weather.askGeo();
+
+    // getDataNeeded(result.results);
+    // console.log(localStorageEntity.popularArr);
+     
+   })
+   .catch(error => console.log(error));
+}
+
+
+function getDataNeeded (arr) {
+     arr.map(result => {
+        if (Object.values(result.media).length > 0) {
+          localStorageEntity.popularArr.push({
+            title: result.title,
+            desc: result.abstract,
+            date: result.published_date,
+            url: result.url,
+            imageURL: result.media[0]['media-metadata'][0].ulr,
+          });
+        } else {
+          localStorageEntity.popularArr.push({
+            title: result.title,
+            desc: result.abstract,
+            date: result.published_date,
+            category: result.section,
+            url: result.url,
+            imageURL: `https://img.freepik.com/free-vector/internet-network-warning-404-error-page-or-file-not-found-for-web-page_1150-48326.jpg?w=996&t=st=1676297842~exp=1676298442~hmac=6cad659e6a3076ffcb73bbb246c4f7e5e1bf7cee7fa095d67fcced0a51c2405c`,
+          });
+        }
+      });
+}
+
+
+function onChooseDateClick(e) {
+  fetchNews.date = e.target.textContent;
+  // console.log(fetchNews.date);
+  // console.log(currentMonthYear.textContent);
+}
+// добавить категории для мобилки 
+
+// добавить клик по фаворит  класс hidden-span
+
+// при сабмите возвращаться на главную 
+
+// ан аккордеоне добавлять класс   is-hidden
+
+// выбор даты и сохранение 
+
+// {abstract, media[0][media-metadata][0], published_date, title, url, nytdsection}
+
+
+// ------------------------------------------------  READ PAGE      -------------------------------------------------------------------
+
+
+// if (readNewsList) {
+//   readNewsList.addEventListener('click', onClick);
+// }
+
+// localStorageReadData = JSON.parse(localStorageReadData);
+// function onClick(e) {
+//   if (!e.target.classList.contains('item-news__info-link')) {
+//     return;
+//   }
+
+//   const choosenNews = e.target.closest('.list-news__item'); // лишка
+//   const id = choosenNews.dataset.id;
+//   //   e.target // toggle class
+//   //     .closest('.item-news__info-link')
+//   //     .classList.toggle('hidden-span');
+
+//   const idX = localStorageFavoriteData.findIndex(item => item.id === id);
+//   localStorageFavoriteData.splice(idX, 1);
+//   localStorage.setItem('favorite', JSON.stringify(localStorageFavoriteData));
+//   if (localStorageFavoriteData.length) {
+//     const favoriteMarkup = localStorageFavoriteData
+//       .map(element => {
+//         return element.markup;
+//         // console.log(element.markup);
+//       })
+//       .join('');
+//     readNewsList.innerHTML = favoriteMarkup;
+//   }
+//   //   else {
+//   //     readNewsList.innerHTML = `<section class="background">
+//   //     <div class="favorite-container container">
+//   //         <p class="background___title">We haven't found news from this category</p>
+//   //         <picture>
+
+//   //           <img class="background___picture" src="https://i.ibb.co/cFdrWFz/desktop.png" alt="background-picture" width="248" height="198">
+//   //         </picture>
+//   //     </div>
+//   //   </section>`;
+//   //   }
+// }

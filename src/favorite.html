@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>News</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="./sass/index.scss" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700&family=Poppins&family=Roboto&display=swap" rel="stylesheet"/>
+    <link rel="icon" type="image/png" sizes="64x64" href="./images/favicon-64x64.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="./images/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="./images/favicon-16x16.png" />
+    <script type="module" src="./js/favorite-page.js"></script>
+    <!-- <link rel="stylesheet" href="./sass/index.scss" /> -->
+  </head>
+
+  <body>
+    <include src="./partials/header.html"></include>
+
+    <section class="favorite-contaner contaner">
+      <ul class="list-news favorite__news--list favorite__news" id="favorite__news">
+         <section class="background">
+    <div class="favorite-container container">     
+        <p class="background___title">We haven't found news from this category</p>
+        <picture>
+          <img class="background___picture" src="https://i.ibb.co/cFdrWFz/desktop.png" alt="background-picture" width="248" height="198">
+        </picture>      
+    </div>
+
+  </section>    
+      </ul>
+    </section>
+    <include src="./partials/footer.html"></include>
+
+    <script type="module" src="./js/mobile-menu.js"></script>
+    <script type="module" src="./favorite.js"></script>
+
+  </body>
+</html>

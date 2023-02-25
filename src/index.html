@@ -1,48 +1,36 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Page title</title>
+    <title>News</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700&family=Poppins&family=Roboto&display=swap" rel="stylesheet" />
+    <link rel="icon" type="image/png" sizes="64x64" href="./images/favicon-64x64.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="./images/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="./images/favicon-16x16.png" />
     <link rel="stylesheet" href="./sass/index.scss" />
-    <script type="module" src="./index.js"></script>
   </head>
-  <body> 
-    <div class="search-form__thumb">
-      <form class="search-form" id="search-form">
-  <input
-    class="input"
-    type="text"
-    name="searchQuery"
-    autocomplete="off"
-    placeholder="Search"
-  />
-  <button type="submit" class="submit__button" >
-    <img src="./images/search__icon.svg" alt="search__svg" width="15" height="15" class="search__icon">
-  </button>
-</form>
-    </div>
 
-<div class="categories__list">
+  <body>
+    <include src="./partials/header.html"></include>
+    <main>
+      <include src="./partials/categories.html"></include>
+      <div class="container-popular">
+        <include src="./partials/popular-news.html"></include>
+      </div>
+      <div id="pagination" class="tui-pagination"></div>
+      <div class=" button__wrap">
+        <button type="button" class="prev__page paginator__item-bt">Prev</button>
+        <button type="button" class="next__page paginator__item-bt">Next</button>
+        </div>
+    </main>
+    <include src="./partials/footer.html"></include>
 
-  <button type="submit" class="category__item"></button>
-  <button type="submit" class="category__item"></button>
-  <button type="submit" class="category__item"></button>
-  <button type="submit" class="category__item"></button>
-  <button type="submit" class="category__item"></button>
-  <button type="submit" class="category__item"></button>
-  <div class="other-categories">
-    <button type="submit" class="other-categories__button">Others</button>
-  <div class="other-categories__thumb is-hidden"></div>
-  </div>
-  
-</div>
+    <script type="module" src="./js/mobile-menu.js"></script>
+    <script type="module" src="./index.js"></script>
 
-<div class="news-list">
-</div>
-<button type="button" class="prev__page">Prev</button>
-<button type="button" class="next__page">Next</button>
-  
-  <script type="module" src="./index.js"></script>
-</body>
+  </body>
 </html>
