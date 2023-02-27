@@ -62,7 +62,7 @@ onPageLoad();
 
 getCategoriesList();
 
-
+// console.log(localStorageEntity.favoriteArr);
 // ---------------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -74,7 +74,12 @@ async function onPrevBtnClick() {
       fetchNews.decrementPage();
       try {
         const news = await fetchNews.fetchNewsBySearch();
-        renderNews.renderNewsbyASearch(news.response.docs, newsList);
+        // renderNews.renderNewsbyASearch(news.response.docs, newsList);
+              getDataNeeded(news.response.docs);
+              renderNews.renderNewsbyASearchQX(
+                localStorageEntity.popularArr,
+                newsList,
+              );
         scroll(0, 0);
       } catch (error) {
         console.log(error);
@@ -117,7 +122,10 @@ async function onNextBtnClick() {
       fetchNews.incrementPage();
       const news = await fetchNews.fetchNewsBySearch();
       console.log(news.response);
-      renderNews.renderNewsbyASearch(news.response.docs, newsList);
+      // renderNews.renderNewsbyASearch(news.response.docs, newsList);
+
+      getDataNeeded(news.response.docs);
+      renderNews.renderNewsbyASearchQX(localStorageEntity.popularArr, newsList);
       scroll(0, 0);
     } catch (error) {
       console.log(error);
@@ -160,7 +168,10 @@ async function onFormSubmit(e) {
   );
   try {
     const news = await fetchNews.fetchNewsBySearch();
-    renderNews.renderNewsbyASearch(news.response.docs, newsList);
+    getDataNeeded(news.response.docs);
+    renderNews.renderNewsbyASearchQX(localStorageEntity.popularArr, newsList);
+    console.log(localStorageEntity.popularArr);
+    // renderNews.renderNewsbyASearch(news.response.docs, newsList);
     scroll(0, 0);
   } catch (error) {
     console.log(error);
@@ -237,28 +248,51 @@ fetchNews
 function getDataNeeded(arr) {
   localStorageEntity.popularArr = [];
   arr.map(result => {
-    if (Object.values(result.media).length) {
-          localStorageEntity.popularArr.push({
-            id: result.id,
-            category: result.section,
-            title: result.title,
-            desc: result.abstract,
-            date: result['published_date'],
-            url: result.url,
-            imageURL:
-              result.media[0]['media-metadata'][2].url
-          });
-        } else {
-          localStorageEntity.popularArr.push({
-            id: result.id,
-            title: result.title,
-            desc: result.abstract,
-            date: result['published_date'],
-            category: result.section,
-            url: result.url,
-            imageURL: `https://img.freepik.com/free-vector/internet-network-warning-404-error-page-or-file-not-found-for-web-page_1150-48326.jpg?w=996&t=st=1676297842~exp=1676298442~hmac=6cad659e6a3076ffcb73bbb246c4f7e5e1bf7cee7fa095d67fcced0a51c2405c`,
-          });
-        }
+    if (searchForm.elements.searchQuery.value !== '') {  // при присковом запросе 
+      if (result.multimedia.length !== 0) {
+        const IMAGE_BASE_URL = 'https://static01.nyt.com/'; // multimedia[0].url
+        localStorageEntity.popularArr.push({
+          id: result.id || '',
+          category: result.section_name,
+          title: result.abstract.trim(),
+          desc: result['lead_paragraph'],
+          date: result['pub_date'],
+          url: result.web_url,
+          imageURL: `${IMAGE_BASE_URL}${result.multimedia[0].url}`,
+        });
+      } else {
+        localStorageEntity.popularArr.push({
+          id: result.id || '',
+          category: result.section_name,
+          title: result.abstract.trim(),
+          desc: result['lead_paragraph'],
+          date: result['pub_date'],
+          url: result.web_url,
+          imageURL: `https://img.freepik.com/free-vector/internet-network-warning-404-error-page-or-file-not-found-for-web-page_1150-48326.jpg?w=996&t=st=1676297842~exp=1676298442~hmac=6cad659e6a3076ffcb73bbb246c4f7e5e1bf7cee7fa095d67fcced0a51c2405c`,
+        });
+      }
+    }
+    else {if (Object.values(result.media).length) { // при популярном 
+      localStorageEntity.popularArr.push({
+        id: result.id,
+        category: result.section,
+        title: result.title,
+        desc: result.abstract,
+        date: result['published_date'],
+        url: result.url,
+        imageURL: result.media[0]['media-metadata'][2].url,
+      });
+    } else {
+      localStorageEntity.popularArr.push({
+        id: result.id,
+        title: result.title,
+        desc: result.abstract,
+        date: result['published_date'],
+        category: result.section,
+        url: result.url,
+        imageURL: `https://img.freepik.com/free-vector/internet-network-warning-404-error-page-or-file-not-found-for-web-page_1150-48326.jpg?w=996&t=st=1676297842~exp=1676298442~hmac=6cad659e6a3076ffcb73bbb246c4f7e5e1bf7cee7fa095d67fcced0a51c2405c`,
+      });
+    } }
      });
 }
 

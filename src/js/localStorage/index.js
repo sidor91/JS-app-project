@@ -20,35 +20,65 @@ export default class LocalStorageClass {
     this.url = '';
   }
 
-    onAddToFavoriteClick(e) {
-      if (
-        !e.target.parentNode.classList.contains('item-news__add-to-favorite')
-      ) {
+  onAddToFavoriteClick(e) {
+      if (!e.target.closest('button')) {
         return;
       }
       e.target // toggle class
         .closest('.item-news__add-to-favorite')
         .classList.toggle('hidden-span');
-      const choosenNews = e.target.closest('.list-news__item'); // лишка
+    const choosenNews = e.target.closest('.list-news__item'); // лишка
+    
+    this.title = choosenNews.querySelector('.item-news__title').textContent;
+    this.desc = choosenNews.querySelector(
+      '.item-news__description',
+    ).textContent;
+    this.imageURL = choosenNews.querySelector('.item-news__img').getAttribute('src');
+    this.category = choosenNews.querySelector(
+      '.item-news__category',
+    ).textContent;
+    this.date = choosenNews.querySelector('.item-news__info-date').textContent;
+    this.url = choosenNews
+      .querySelector('.item-news__info-link')
+      .getAttribute('href');
+    
       this.id = choosenNews.dataset.id; // id лишки
       const choosenNewsMarkup = `<li class="list-news__item popular-news__item"data-id=${this.id}>${choosenNews.innerHTML}</li>`; // разметка
       const chooseNewsObj = {
         //объект с id и разметкой
+        title: this.title,
+        desc: this.desc,
+        imageURL: this.imageURL,
+        url: this.url,
+        category: this.category,
         id: this.id,
+        date: this.date,
         markup: choosenNewsMarkup,
       };
-
+    console.log(chooseNewsObj);
       if (localStorage.getItem('favorite')) {
         // есть ли в LS запись с ключом favorite ?
         // если в LS есть запись favorite  =>
         const localStorageFavoriteData = localStorage.getItem('favorite'); // данные с LS
         this.favoriteArr = JSON.parse(localStorageFavoriteData) || []; // распарсенніе данные (массив объектов)
 
-
+        // const doesHaveElement = this.favoriteArr.findIndex(   // проверяем есть ли в массиве объектов, объект с данным id
+        //   news => news.id === this.id
+        // );
+        // if (doesHaveElement < 0) {
+        //   // если нет
+        //   this.favoriteArr.push(chooseNewsObj);
+        //   localStorage.setItem('favorite', JSON.stringify(this.favoriteArr));
+        // } else {
+        //   // если да
+        //   this.favoriteArr.splice(doesHaveElement, 1);
+        //   localStorage.setItem('favorite', JSON.stringify(this.favoriteArr));
+        // }
+        
         const doesHaveElement = this.favoriteArr.findIndex(
-          news => news.id === this.id
-        ); // проверяем есть ли в массиве объектов, объект с данным id
-        // console.log(doesHaveElement);
+          // проверяем есть ли в массиве объектов, объект с данным id
+          news => news.title === this.title,
+        );
         if (doesHaveElement < 0) {
           // если нет
           this.favoriteArr.push(chooseNewsObj);
@@ -71,8 +101,6 @@ export default class LocalStorageClass {
     if (!e.target.classList.contains('item-news__info-link')) {
       return;
     }
-
-    
 
     const choosenNews = e.target.closest('.list-news__item'); // лишка
     this.id = choosenNews.dataset.id; // id лишки
@@ -104,13 +132,4 @@ export default class LocalStorageClass {
       localStorage.setItem('read', JSON.stringify(this.read));
     }
   }
-  
-  
-
 }
-
-// const localStorageEntity = new LocalStorageClass();
-// favoriteNewsList.addEventListener(
-//   'click',
-//   localStorageEntity.onAddToFavoriteClick.bind(localStorageEntity)
-// );

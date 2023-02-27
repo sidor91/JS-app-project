@@ -6,10 +6,11 @@ const oneDayNews = document.querySelector('.date-list__item');
 oneDayNews.addEventListener('click', onDayClick);
 
 function onDayClick(e) {
-    
-    if (e.target.classList.contains('date__day') || e.target.classList.contains('date__arrow')) {
-        readNewsList.classList.toggle('is-hidden');
-    }
+  if (
+    e.target.closest(".date-list__btn")
+  ) {
+    readNewsList.classList.toggle('is-hidden');
+  }
 }
 
 let localStorageReadData = localStorage.getItem('read');
