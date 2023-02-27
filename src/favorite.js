@@ -2,34 +2,36 @@
 import LocalStorageClass from './js/localStorage';
 import './js/dark-light_theme';
 
-const localStorageEntity = new LocalStorageClass();
-
-
-
-
-const favoriteNewsList = document.querySelector('#favorite__news');
+const localStorageEntity = new LocalStorageClass(); // localStorageEntity.onAddToFavoriteClick.bind(localStorageEntity)
+const favoriteNewsList = document.querySelector('#favorite__news');  // контейнер 
+favoriteNewsList.addEventListener(
+  'click',
+  localStorageEntity.onAddToFavoriteClick.bind(localStorageEntity)
+);
 
 let localStorageFavoriteData = localStorage.getItem('favorite');
-if (localStorageFavoriteData && localStorageFavoriteData.length) {
-  const parsedData = JSON.parse(localStorageFavoriteData); // распарсенніе данные (массив объектов)
-  const favoriteMarkup = parsedData
+// console.log(localStorageFavoriteData);
+if (localStorageFavoriteData && localStorageFavoriteData.length) {     // если в LS есть запись favorite и она не пустая 
+  const parsedData = JSON.parse(localStorageFavoriteData); // распарсенные данные (массив объектов)
+  const favoriteMarkup = parsedData      // разметка страницы favorite 
     .map(element => {
       return element.markup;
       // console.log(element.markup);
     })
     .join('');
-  favoriteNewsList.innerHTML = favoriteMarkup;
+  favoriteNewsList.innerHTML = favoriteMarkup;    // рендер разметки 
 }
 
 
-if (favoriteNewsList) {
-    favoriteNewsList.addEventListener(
-      'click', onClick
-    );
-}
+// if (favoriteNewsList) {
+//     favoriteNewsList.addEventListener(
+//       'click', onClick
+//     );
+// }
 
-    localStorageFavoriteData = JSON.parse(localStorageFavoriteData);
-function onClick(e) {
+localStorageFavoriteData = JSON.parse(localStorageFavoriteData); //  массив эелементов 
+
+function onClick(e) {  // при клике на add to favorite 
     if (!e.target.parentNode.classList.contains('item-news__add-to-favorite')) {
         return;
     } 
@@ -40,9 +42,9 @@ function onClick(e) {
       .closest('.item-news__add-to-favorite')
         .classList.toggle('hidden-span');
 
-    const idX = localStorageFavoriteData.findIndex(item => item.id === id);
-    localStorageFavoriteData.splice(idX, 1);
-    localStorage.setItem('favorite', JSON.stringify(localStorageFavoriteData));
+    const idX = localStorageFavoriteData.findIndex(item => item.id === id);  // id элемента по которому кликнули 
+    localStorageFavoriteData.splice(idX, 1);     // удаление этого эелемента из массива 
+    localStorage.setItem('favorite', JSON.stringify(localStorageFavoriteData));   // добавление массива в LS 
     if (localStorageFavoriteData.length) {
 const favoriteMarkup = localStorageFavoriteData
   .map(element => {
@@ -52,6 +54,7 @@ const favoriteMarkup = localStorageFavoriteData
   .join('');
 favoriteNewsList.innerHTML = favoriteMarkup;
     } else {
+      // localStorage.removeItem('favorite');
         favoriteNewsList.innerHTML = `<section class="background">
     <div class="favorite-container container">     
         <p class="background___title">We haven't found news from this category</p>
@@ -66,20 +69,4 @@ favoriteNewsList.innerHTML = favoriteMarkup;
 
 }
 
-
-// `          <source media="(max-width:767.99px)" srcset="
-//                       ./images/mobile.png 248w,
-//                       ./images/mobile@2x.png 496w 
-//                       " sizes="248px" />
-//           <source media="(max-width:1279.99px)" srcset="
-//                       ./images/tablet.png 560w,
-//                       ./images/tablet@2x.png 1120w
-//                       " sizes="560px" />
-//           <source media="(min-width:1280px)" srcset="
-//                       ./images/desktop.png 601w,
-//                       ./images/desktop@2x.png 1202w
-//                       " sizes="601px" />`;
-
-
-//  console.log(favoriteContainer);
 

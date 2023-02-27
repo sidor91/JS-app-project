@@ -100,7 +100,8 @@ async function onPrevBtnClick() {
       renderNews.currentPage -= 1;
       try {
         const news = await fetchNews.fetchNewsByMostPopular();
-        renderNews.renderPopularNews(news.results, newsList);
+        getDataNeeded(news.results);
+        renderNews.renderPopularNewsQX(localStorageEntity.popularArr, newsList);
         scroll(0, 0);
       } catch (error) {
         console.log(error);
@@ -141,7 +142,8 @@ async function onNextBtnClick() {
       renderNews.currentPage += 1;
       try {
         const news = await fetchNews.fetchNewsByMostPopular();
-        renderNews.renderPopularNews(news.results, newsList);
+        getDataNeeded(news.results);
+        renderNews.renderPopularNewsQX(localStorageEntity.popularArr, newsList);
         scroll(0, 0);
       } catch (error) {
         console.log(error);
@@ -223,39 +225,41 @@ async function onPageLoad() {
 fetchNews
     .fetchNewsByMostPopular()
   .then(result => {
-    console.log(result.results)
-    renderNews.renderPopularNews(result.results, newsList);
     weather.askGeo();
-
-    // getDataNeeded(result.results);
-    // console.log(localStorageEntity.popularArr);
+    getDataNeeded(result.results);
+    renderNews.renderPopularNewsQX(localStorageEntity.popularArr, newsList);
      
    })
-   .catch(error => console.log(error));
+  .catch(error => console.log(error)); 
 }
 
 
-function getDataNeeded (arr) {
-     arr.map(result => {
-        if (Object.values(result.media).length > 0) {
+function getDataNeeded(arr) {
+  localStorageEntity.popularArr = [];
+  arr.map(result => {
+    if (Object.values(result.media).length) {
           localStorageEntity.popularArr.push({
+            id: result.id,
+            category: result.section,
             title: result.title,
             desc: result.abstract,
-            date: result.published_date,
+            date: result['published_date'],
             url: result.url,
-            imageURL: result.media[0]['media-metadata'][0].ulr,
+            imageURL:
+              result.media[0]['media-metadata'][2].url
           });
         } else {
           localStorageEntity.popularArr.push({
+            id: result.id,
             title: result.title,
             desc: result.abstract,
-            date: result.published_date,
+            date: result['published_date'],
             category: result.section,
             url: result.url,
             imageURL: `https://img.freepik.com/free-vector/internet-network-warning-404-error-page-or-file-not-found-for-web-page_1150-48326.jpg?w=996&t=st=1676297842~exp=1676298442~hmac=6cad659e6a3076ffcb73bbb246c4f7e5e1bf7cee7fa095d67fcced0a51c2405c`,
           });
         }
-      });
+     });
 }
 
 

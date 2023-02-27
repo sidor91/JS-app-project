@@ -48,7 +48,7 @@ export default class LocalStorageClass {
         const doesHaveElement = this.favoriteArr.findIndex(
           news => news.id === this.id
         ); // проверяем есть ли в массиве объектов, объект с данным id
-        console.log(doesHaveElement);
+        // console.log(doesHaveElement);
         if (doesHaveElement < 0) {
           // если нет
           this.favoriteArr.push(chooseNewsObj);

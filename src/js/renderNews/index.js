@@ -23,27 +23,19 @@ export default class RenderNews {
     this.weatherMarkup = '';
   }
   async renderPopularNews(newsArr, elemToJoin) {
-    console.log(newsArr);
     if (mobileScreenSize === true) {
       // менять надпись other на categories
       this.lastElem = this.currentPage * 4;
       this.firstElem = this.lastElem - 4;
       this.maxPages = Math.ceil(newsArr.length / 4);
-
     } else if (tabletScreenSize === true) {
       this.lastElem = this.currentPage * 7;
       this.firstElem = this.lastElem - 7;
       this.maxPages = Math.ceil(newsArr.length / 8);
-    
-  
-
     } else if (desktopScreenSize === true) {
       this.lastElem = this.currentPage * 8;
       this.firstElem = this.lastElem - 8;
       this.maxPages = Math.ceil(newsArr.length / 9);
-    
-  
-
     }
     const newsList = newsArr.slice(this.firstElem, this.lastElem);
     const newsMarkup = newsList.map(
@@ -58,21 +50,20 @@ export default class RenderNews {
           imageURL = media[0]['media-metadata'][2].url;
         }
 
-        
         // console.log(localStorage.getItem('favorite').length);
-                        // if (localStorage.getItem('favorite').length > 0) {
-                        //   const localStorageFavoriteData =
-                        //     localStorage.getItem('favorite'); // данные с LS
-                        //   const parsedData = JSON.parse(
-                        //     localStorageFavoriteData
-                        //   ); // распарсенніе данные (массив объектов)
-                        //   parsedData.map(element => {
-                        //     if (element.id === id) {
-                        //       console.log(element.id);
-                        //       console.log(id)
-                        //     }
-                        //   });
-                        // }
+        // if (localStorage.getItem('favorite').length > 0) {
+        //   const localStorageFavoriteData =
+        //     localStorage.getItem('favorite'); // данные с LS
+        //   const parsedData = JSON.parse(
+        //     localStorageFavoriteData
+        //   ); // распарсенніе данные (массив объектов)
+        //   parsedData.map(element => {
+        //     if (element.id === id) {
+        //       console.log(element.id);
+        //       console.log(id)
+        //     }
+        //   });
+        // }
         return `<li class="list-news__item popular-news__item" data-id=${id}>
   <article class="item-news__article">
     <div class="item-news__wrapper-img">
@@ -402,8 +393,15 @@ export default class RenderNews {
     }
   }
 
-  renderNewsCard(id, imageURL, category, title, desc, newsDate, url, additionalClass = '') {
-    return `<li class="list-news__item popular-news__item" data-id=${id}>
+  renderNewsCard(
+    { id, imageURL, category, title, desc, date, url },
+    additionalClass = ''
+  ) {
+    date = format(new Date(`${date}`), 'MM/dd/yyyy');
+    if (desc.length > 115) {
+      desc = desc.substring(0, 115);
+    }
+    const markup = `<li class="list-news__item popular-news__item" data-id=${id}>
   <article class="item-news__article">
     <div class="item-news__wrapper-img">
       <img
@@ -462,13 +460,69 @@ export default class RenderNews {
       </p>
     </div>
     <div class="item-news__info">
-      <span class="item-news__info-date">${newsDate}</span>
+      <span class="item-news__info-date">${date}</span>
       <a target="_blank" class="item-news__info-link" href="${url}">
         Read more
       </a>
     </div>
   </article>
 </li>`;
+    return markup;
+  }
+
+  async renderPopularNewsQX(newsArr, elemToJoin) {
+    // передаем массив с файла локал сторидж
+    // console.log(newsArr);
+    if (mobileScreenSize === true) {
+      // менять надпись other на categories
+      this.lastElem = this.currentPage * 4;
+      this.firstElem = this.lastElem - 4;
+      this.maxPages = Math.ceil(newsArr.length / 4);
+    } else if (tabletScreenSize === true) {
+      this.lastElem = this.currentPage * 7;
+      this.firstElem = this.lastElem - 7;
+      this.maxPages = Math.ceil(newsArr.length / 8);
+    } else if (desktopScreenSize === true) {
+      this.lastElem = this.currentPage * 8;
+      this.firstElem = this.lastElem - 8;
+      this.maxPages = Math.ceil(newsArr.length / 9);
+    }
+    const newsList = newsArr.slice(this.firstElem, this.lastElem);
+    const favoriteArr = JSON.parse(localStorage.getItem('favorite'));
+    const idArr = favoriteArr.map(elem => elem.id);
+    const newsMarkup = newsList.map(news => {
+      let newsIdToString = news.id.toString();
+      if (idArr.includes(newsIdToString)) {
+        return this.renderNewsCard(news, 'hidden-span');
+      } else {
+        return this.renderNewsCard(news);
+      }
+    });
+    if (mobileScreenSize === true) {
+      newsMarkup.splice(0, 0, this.weatherMarkup);
+      const newsMarkupWithWeather = newsMarkup
+        .map(news => {
+          return news;
+        })
+        .join('');
+      elemToJoin.innerHTML = newsMarkupWithWeather;
+    } else if (tabletScreenSize === true) {
+      newsMarkup.splice(1, 0, this.weatherMarkup);
+      const newsMarkupWithWeather = newsMarkup
+        .map(news => {
+          return news;
+        })
+        .join('');
+      elemToJoin.innerHTML = newsMarkupWithWeather;
+    } else if (desktopScreenSize === true) {
+      newsMarkup.splice(2, 0, this.weatherMarkup);
+      const newsMarkupWithWeather = newsMarkup
+        .map(news => {
+          return news;
+        })
+        .join('');
+      elemToJoin.innerHTML = newsMarkupWithWeather;
+    }
   }
 }
 
