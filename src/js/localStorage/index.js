@@ -55,7 +55,6 @@ export default class LocalStorageClass {
         date: this.date,
         markup: choosenNewsMarkup,
       };
-    console.log(chooseNewsObj);
       if (localStorage.getItem('favorite')) {
         // есть ли в LS запись с ключом favorite ?
         // если в LS есть запись favorite  =>
