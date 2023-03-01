@@ -1,4 +1,6 @@
 import './js/dark-light_theme';
+import './js/mobile-menu';
+import './js/favorite-page';
 import LocalStorageClass from './js/localStorage';
 import RenderNews from './js/renderNews';
 

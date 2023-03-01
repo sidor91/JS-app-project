@@ -113,7 +113,8 @@ async function onPaginationClick(event) {
 
 export async function onFormSubmit(e) {
   e.preventDefault();
-  pagination.reset();
+  pagination.setTotalItems(1000);
+  pagination.reset(100);
   renderNews.currentPage = 1;
   fetchNews.page = 1;
 
