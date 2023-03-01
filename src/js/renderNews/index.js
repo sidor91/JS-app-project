@@ -1,4 +1,5 @@
 import { format, compareAsc } from 'date-fns';
+import { pagination } from '../../index';
 
 const addToFavoriteBtn = document.querySelector('.item-news__add-to-favorite');
 
@@ -458,14 +459,20 @@ export default class RenderNews {
       this.lastElem = this.currentPage * 4;
       this.firstElem = this.lastElem - 4;
       this.maxPages = Math.ceil(newsArr.length / 4);
+      pagination.setItemsPerPage(5);
+      pagination.setTotalItems(21);
     } else if (tabletScreenSize === true) {
       this.lastElem = this.currentPage * 7;
       this.firstElem = this.lastElem - 7;
       this.maxPages = Math.ceil(newsArr.length / 8);
+      pagination.setItemsPerPage(8);
+      pagination.setTotalItems(20);
     } else if (desktopScreenSize === true) {
       this.lastElem = this.currentPage * 8;
       this.firstElem = this.lastElem - 8;
       this.maxPages = Math.ceil(newsArr.length / 9);
+      pagination.setItemsPerPage(9);
+      pagination.setTotalItems(20);
     }
     const newsList = newsArr.slice(this.firstElem, this.lastElem);
     const favoriteArr = JSON.parse(localStorage.getItem('favorite'));
@@ -511,14 +518,49 @@ export default class RenderNews {
   }
 
   renderNewsbyASearchQX(newsArr, elem) {
-    console.log(newsArr);
+    // console.log(newsArr);
+    // const favoriteArr = JSON.parse(localStorage.getItem('favorite'));
+    // let newsMarkup;
+    // if (!favoriteArr) {
+    //   newsMarkup = newsArr.map(news => this.renderNewsCard(news));
+    // } else {
+    //   newsMarkup = newsArr.map(news => {
+    //     const urlArr = favoriteArr.map(element => element.url);
+    //     if (urlArr.includes(news.url)) {
+    //       return this.renderNewsCard(news, 'hidden-span');
+    //     } else {
+    //       return this.renderNewsCard(news);
+    //     }
+    //   });
+    // }
+// -------------------------------
+    if (mobileScreenSize === true) {
+      this.lastElem = this.currentPage * 4;
+      this.firstElem = this.lastElem - 4;
+      this.maxPages = Math.ceil(newsArr.length / 4);
+      pagination.setItemsPerPage(5);
+      pagination.setTotalItems(1000);
+    } else if (tabletScreenSize === true) {
+      this.lastElem = this.currentPage * 7;
+      this.firstElem = this.lastElem - 7;
+      this.maxPages = Math.ceil(newsArr.length / 8);
+      pagination.setItemsPerPage(8);
+      pagination.setTotalItems(100);
+    } else if (desktopScreenSize === true) {
+      this.lastElem = this.currentPage * 8;
+      this.firstElem = this.lastElem - 8;
+      this.maxPages = Math.ceil(newsArr.length / 9);
+      pagination.setItemsPerPage(9);
+      pagination.setTotalItems(100);
+    }
+    const newsList = newsArr.slice(this.firstElem, this.lastElem);
     const favoriteArr = JSON.parse(localStorage.getItem('favorite'));
     let newsMarkup;
     if (!favoriteArr) {
-      newsMarkup = newsArr.map(news => this.renderNewsCard(news));
+      newsMarkup = newsList.map(news => this.renderNewsCard(news));
     } else {
-      newsMarkup = newsArr.map(news => {
-        const urlArr = favoriteArr.map(element => element.url);
+      const urlArr = favoriteArr.map(elem => elem.url);
+      newsMarkup = newsList.map(news => {
         if (urlArr.includes(news.url)) {
           return this.renderNewsCard(news, 'hidden-span');
         } else {
@@ -526,6 +568,9 @@ export default class RenderNews {
         }
       });
     }
+
+
+    // --------------------
     if (mobileScreenSize === true) {
       newsMarkup.splice(0, 0, this.weatherMarkup);
       const newsMarkupWithWeather = newsMarkup
@@ -559,10 +604,20 @@ export default class RenderNews {
       this.lastElem = this.currentPage * 4;
       this.firstElem = this.lastElem - 4;
       this.maxPages = Math.ceil(newsArr.length / 4);
+      pagination.setItemsPerPage(5);
+      pagination.setTotalItems(21);
     } else if (tabletScreenSize === true) {
       this.lastElem = this.currentPage * 7;
       this.firstElem = this.lastElem - 7;
       this.maxPages = Math.ceil(newsArr.length / 8);
+      pagination.setItemsPerPage(8);
+      pagination.setTotalItems(20);
+    } else if (desktopScreenSize === true) {
+      this.lastElem = this.currentPage * 8;
+      this.firstElem = this.lastElem - 8;
+      this.maxPages = Math.ceil(newsArr.length / 9);
+      pagination.setItemsPerPage(9);
+      pagination.setTotalItems(20);
     }
 
     const newsList = newsArr.slice(this.firstElem, this.lastElem);

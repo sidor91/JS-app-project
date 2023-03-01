@@ -1,10 +1,18 @@
 import './js/dark-light_theme';
-import FetchNews from './js/fetchNews';
 import RenderNews from './js/renderNews';
 import LocalStorageClass from './js/localStorage';
 
+
+
+// // -----------------------------------------------------------------
+// import './js/pagination';
+// const Pagination = require('tui-pagination');
+// import { pagination } from './js/pagination';
+
+// -----------------------------------------------------------------
+
+
 const renderNews = new RenderNews();
-const fetchNews = new FetchNews();
 const localStorageEntity = new LocalStorageClass();
 const readNewsList = document.querySelector('.list-news');
 const oneDayNews = document.querySelector('.date-list__item');

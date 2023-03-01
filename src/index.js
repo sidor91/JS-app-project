@@ -7,6 +7,17 @@ import FetchNews from './js/fetchNews';
 import RenderNews from './js/renderNews';
 import Weather from './js/weather';
 import LocalStorageClass from './js/localStorage';
+import 'tui-pagination/dist/tui-pagination.min.css';
+import Pagination from 'tui-pagination';
+
+
+const container = document.querySelector('#tui-pagination-container');
+const options = {
+  totalItems: 21,
+  itemsPerPage: 9,
+  page: 1,
+};
+export const pagination = new Pagination(container, options);
 
 const mobileScreenSize = window.matchMedia(
   'screen and (max-width: 767px)',
@@ -25,21 +36,16 @@ const renderNews = new RenderNews();
 const fetchNews = new FetchNews();
 const newsList = document.querySelector('.list-news');
 const searchForm = document.querySelector('.search-field');
-const prevPage = document.querySelector('.prev__page');
-const nextPage = document.querySelector('.next__page');
 const categoriesList = document.querySelector('.category__list-bt');
-const otherCategoryBtn = document.querySelector('.category__item-bt-arrow');
 const otherCategoriesThumb = document.querySelector('.filter-category__list');
-const otherCategoryContainer = document.querySelector(
-  '.category__others-container',
-);
 const chooseDate = document.querySelector('.days');
+const dateInput = document.querySelector('#input-picker')
+
+
 
 chooseDate.addEventListener('click', onChooseDateClick);
 categoriesList.addEventListener('click', onCategoryClick);
 otherCategoriesThumb.addEventListener('click', onCategoryClick);
-prevPage.addEventListener('click', onPrevBtnClick);
-nextPage.addEventListener('click', onNextBtnClick);
 searchForm.addEventListener('submit', onFormSubmit);
 newsList.addEventListener(
   'click',
@@ -56,72 +62,16 @@ onPageLoad();
 
 getCategoriesList();
 
-// console.log(localStorageEntity.favoriteArr);
-// console.log(localStorageEntity.popularArr);
 // ---------------------------------------------------------------------------------------------------------------------------------------
+pagination.on('afterMove', onPaginationClick);
 
-async function onPrevBtnClick() {
-  if (searchForm.elements.searchQuery.value !== '') {
-    if (fetchNews.currentPage === 0) {
-      return;
-    } else {
-      fetchNews.decrementPage();
-      try {
-        const news = await fetchNews.fetchNewsBySearch();
-        // renderNews.renderNewsbyASearch(news.response.docs, newsList);
-        getDataNeeded(news.response.docs);
-        renderNews.renderNewsbyASearchQX(
-          localStorageEntity.popularArr,
-          newsList,
-        );
-        scroll(0, 0);
-      } catch (error) {
-        console.log(error);
-      }
-    }
-  } else if (fetchNews.category !== '') {
-    if (renderNews.currentPage === 1) {
-      return;
-    } else {
-      renderNews.currentPage -= 1;
-      try {
-        const news = await fetchNews.fetchNewsByCategory();
-        getDataNeeded(news.results);
-        renderNews.renderCategoryNewsQX(
-          localStorageEntity.popularArr,
-          newsList,
-        );
-        // renderNews.renderCategoryNews(news.results, newsList);
-        scroll(0, 0);
-      } catch (error) {
-        console.log(error);
-      }
-    }
-  } else {
-    if (renderNews.currentPage === 1) {
-      return;
-    } else {
-      renderNews.currentPage -= 1;
-      try {
-        const news = await fetchNews.fetchNewsByMostPopular();
-        getDataNeeded(news.results);
-        renderNews.renderPopularNewsQX(localStorageEntity.popularArr, newsList);
-        scroll(0, 0);
-      } catch (error) {
-        console.log(error);
-      }
-    }
-  }
-}
+async function onPaginationClick(event) {
+  const currentPage = event.page;
 
-async function onNextBtnClick() {
   if (searchForm.elements.searchQuery.value !== '') {
     try {
-      fetchNews.incrementPage();
+      fetchNews.page = currentPage;
       const news = await fetchNews.fetchNewsBySearch();
-      console.log(news.response);
-      // renderNews.renderNewsbyASearch(news.response.docs, newsList);
-
       getDataNeeded(news.response.docs);
       renderNews.renderNewsbyASearchQX(localStorageEntity.popularArr, newsList);
       scroll(0, 0);
@@ -132,7 +82,7 @@ async function onNextBtnClick() {
     if (renderNews.currentPage === renderNews.maxPages) {
       return;
     } else {
-      renderNews.currentPage += 1;
+      renderNews.currentPage = currentPage;
       try {
         const news = await fetchNews.fetchNewsByCategory();
         getDataNeeded(news.results);
@@ -140,17 +90,13 @@ async function onNextBtnClick() {
           localStorageEntity.popularArr,
           newsList,
         );
-        // renderNews.renderCategoryNews(news.results, newsList);
         scroll(0, 0);
       } catch (error) {
         console.log(error);
       }
     }
   } else {
-    if (renderNews.currentPage === renderNews.maxPages) {
-      return;
-    } else {
-      renderNews.currentPage += 1;
+      renderNews.currentPage = currentPage;
       try {
         const news = await fetchNews.fetchNewsByMostPopular();
         getDataNeeded(news.results);
@@ -159,13 +105,18 @@ async function onNextBtnClick() {
       } catch (error) {
         console.log(error);
       }
-    }
+    
   }
+
 }
+
 
 export async function onFormSubmit(e) {
   e.preventDefault();
+  pagination.reset();
   renderNews.currentPage = 1;
+  fetchNews.page = 1;
+
   fetchNews.searchQuery = encodeURIComponent(
     `${e.currentTarget.elements.searchQuery.value}`,
   );
@@ -174,7 +125,6 @@ export async function onFormSubmit(e) {
     getDataNeeded(news.response.docs);
     renderNews.renderNewsbyASearchQX(localStorageEntity.popularArr, newsList);
     console.log(localStorageEntity.popularArr);
-    // renderNews.renderNewsbyASearch(news.response.docs, newsList);
     scroll(0, 0);
   } catch (error) {
     console.log(error);
@@ -183,6 +133,8 @@ export async function onFormSubmit(e) {
 
 async function onCategoryClick(e) {
   renderNews.currentPage = 1;
+  fetchNews.page = 1;
+  pagination.reset();
   if (!e.target.hasAttribute('name')) {
     return;
   }
@@ -195,8 +147,6 @@ async function onCategoryClick(e) {
     console.log(fetchCategoryNews.results);
     getDataNeeded(fetchCategoryNews.results);
     renderNews.renderCategoryNewsQX(localStorageEntity.popularArr, newsList);
-
-    // renderNews.renderCategoryNews(fetchCategoryNews.results, newsList);
   } catch (error) {
     console.log(error);
   }
@@ -247,17 +197,14 @@ async function onPageLoad() {
     .catch(error => console.log(error));
 }
 
-
 function onChooseDateClick(e) {
-  fetchNews.date = e.target.textContent;
-  // console.log(fetchNews.date);
-  // console.log(currentMonthYear.textContent);
+  const formattedDate = dateInput.value.replaceAll('/', '-');
+  fetchNews.date = formattedDate;
+  console.log(formattedDate);
 }
 // добавить категории для мобилки
 
 // при сабмите возвращаться на главную
-
-// выбор даты и сохранение
 
 
 function getDataNeeded(arr) {
@@ -271,7 +218,7 @@ function getDataNeeded(arr) {
   let url;
   arr.map(result => {
     if (searchForm.elements.searchQuery.value !== '') {
-      if (result.multimedia.length !== 0) {
+      if (result.multimedia.length > 0) {
         imageURL = `${IMAGE_BASE_URL}${result.multimedia[0].url}`;
       }
       category = result.section_name;

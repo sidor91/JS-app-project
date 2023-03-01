@@ -1,9 +1,9 @@
 import './js/dark-light_theme';
 import LocalStorageClass from './js/localStorage';
-import FetchNews from './js/fetchNews';
 import RenderNews from './js/renderNews';
+
+
 const renderNews = new RenderNews();
-const fetchNews = new FetchNews();
 const localStorageEntity = new LocalStorageClass();
 
 const favoriteNewsList = document.querySelector('#favorite__news'); // контейнер

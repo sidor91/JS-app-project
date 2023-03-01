@@ -7,7 +7,7 @@ let date = new Date(),
     currDay = date.getDate(),
     currMonth = date.getMonth(),
     currYear = date.getFullYear();
-// function showCurrentDate() {
+// export function showCurrentDate() {
 //   let value1 = currYear + '-' + (currMonth + 1) + '-' + currDay;
 //   document.getElementById('input-picker').value = value1;
 // }
