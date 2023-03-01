@@ -57,6 +57,7 @@ onPageLoad();
 getCategoriesList();
 
 // console.log(localStorageEntity.favoriteArr);
+// console.log(localStorageEntity.popularArr);
 // ---------------------------------------------------------------------------------------------------------------------------------------
 
 async function onPrevBtnClick() {
@@ -162,7 +163,7 @@ async function onNextBtnClick() {
   }
 }
 
-async function onFormSubmit(e) {
+export async function onFormSubmit(e) {
   e.preventDefault();
   renderNews.currentPage = 1;
   fetchNews.searchQuery = encodeURIComponent(
@@ -246,56 +247,6 @@ async function onPageLoad() {
     .catch(error => console.log(error));
 }
 
-// function getDataNeeded(arr) {
-//   localStorageEntity.popularArr = [];
-//   arr.map(result => {
-//     if (searchForm.elements.searchQuery.value !== '') {  // при присковом запросе
-//       if (result.multimedia.length !== 0) {
-//         const IMAGE_BASE_URL = 'https://static01.nyt.com/'; // multimedia[0].url
-//         localStorageEntity.popularArr.push({
-//           id: result.id || '',
-//           category: result.section_name,
-//           title: result.abstract.trim(),
-//           desc: result['lead_paragraph'],
-//           date: result['pub_date'],
-//           url: result.web_url,
-//           imageURL: `${IMAGE_BASE_URL}${result.multimedia[0].url}`,
-//         });
-//       } else {
-//         localStorageEntity.popularArr.push({
-//           id: result.id || '',
-//           category: result.section_name,
-//           title: result.abstract.trim(),
-//           desc: result['lead_paragraph'],
-//           date: result['pub_date'],
-//           url: result.web_url,
-//           imageURL: `https://img.freepik.com/free-vector/internet-network-warning-404-error-page-or-file-not-found-for-web-page_1150-48326.jpg?w=996&t=st=1676297842~exp=1676298442~hmac=6cad659e6a3076ffcb73bbb246c4f7e5e1bf7cee7fa095d67fcced0a51c2405c`,
-//         });
-//       }
-//     }
-//     else {if (Object.values(result.media).length) { // при популярном
-//       localStorageEntity.popularArr.push({
-//         id: result.id,
-//         category: result.section,
-//         title: result.title,
-//         desc: result.abstract,
-//         date: result['published_date'],
-//         url: result.url,
-//         imageURL: result.media[0]['media-metadata'][2].url,
-//       });
-//     } else {
-//       localStorageEntity.popularArr.push({
-//         id: result.id,
-//         title: result.title,
-//         desc: result.abstract,
-//         date: result['published_date'],
-//         category: result.section,
-//         url: result.url,
-//         imageURL: `https://img.freepik.com/free-vector/internet-network-warning-404-error-page-or-file-not-found-for-web-page_1150-48326.jpg?w=996&t=st=1676297842~exp=1676298442~hmac=6cad659e6a3076ffcb73bbb246c4f7e5e1bf7cee7fa095d67fcced0a51c2405c`,
-//       });
-//     } }
-//      });
-// }
 
 function onChooseDateClick(e) {
   fetchNews.date = e.target.textContent;
@@ -308,37 +259,11 @@ function onChooseDateClick(e) {
 
 // выбор даты и сохранение
 
-// ------------------------------------------------  READ PAGE      -------------------------------------------------------------------
-
-// title: result.title
-// desc: result.abstract
-// imageURL: result.multimedia[0].url
-// url: result.url
-// category: result.section
-// date: result.published_date
-// id: ''
-
-// id: result.id,
-// category: result.section,
-// title: result.title,
-// desc: result.abstract,
-// date: result['published_date'],
-// url: result.url,
-// imageURL: result.media[0]['media-metadata'][2].url,
-
-// id: '',
-// category: result.section_name,
-// title: result.abstract,
-// desc: result['lead_paragraph'],
-// date: result['pub_date'],
-// url: result.web_url,
-// imageURL: `${IMAGE_BASE_URL}${result.multimedia[0].url}`,
 
 function getDataNeeded(arr) {
   localStorageEntity.popularArr = [];
   const IMAGE_BASE_URL = 'https://static01.nyt.com/';
   let imageURL = `https://img.freepik.com/free-vector/internet-network-warning-404-error-page-or-file-not-found-for-web-page_1150-48326.jpg?w=996&t=st=1676297842~exp=1676298442~hmac=6cad659e6a3076ffcb73bbb246c4f7e5e1bf7cee7fa095d67fcced0a51c2405c`;
-  let id;
   let category;
   let title;
   let desc;
@@ -349,7 +274,6 @@ function getDataNeeded(arr) {
       if (result.multimedia.length !== 0) {
         imageURL = `${IMAGE_BASE_URL}${result.multimedia[0].url}`;
       }
-      id = '';
       category = result.section_name;
       title = result.abstract;
       desc = result['lead_paragraph'];
@@ -359,7 +283,6 @@ function getDataNeeded(arr) {
       if (result.multimedia) {
       imageURL = result.multimedia[1].url;
       }
-      id = '';
       category = result.section;
       title = result.title;
       desc = result.abstract;
@@ -369,7 +292,6 @@ function getDataNeeded(arr) {
       if (result.media.length !== 0) {
         imageURL = result.media[0]['media-metadata'][2].url;
       }
-      id = result.id;
       category = result.section;
       title = result.title;
       desc = result.abstract;
@@ -377,7 +299,6 @@ function getDataNeeded(arr) {
       url = result.url;
     }
     localStorageEntity.popularArr.push({
-      id,
       category,
       title,
       desc,

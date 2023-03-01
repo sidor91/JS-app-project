@@ -1,10 +1,18 @@
-// import './js/localStorage';
-import LocalStorageClass from './js/localStorage';
 import './js/dark-light_theme';
+import LocalStorageClass from './js/localStorage';
+import FetchNews from './js/fetchNews';
+import RenderNews from './js/renderNews';
+const renderNews = new RenderNews();
+const fetchNews = new FetchNews();
+const localStorageEntity = new LocalStorageClass();
 
-const localStorageEntity = new LocalStorageClass(); // localStorageEntity.onAddToFavoriteClick.bind(localStorageEntity)
 const favoriteNewsList = document.querySelector('#favorite__news'); // контейнер
+
 favoriteNewsList.addEventListener('click', onClick);
+favoriteNewsList.addEventListener(
+  'click',
+  localStorageEntity.onReadMoreClick.bind(localStorageEntity),
+);
 
 let localStorageFavoriteData = localStorage.getItem('favorite');
 
@@ -12,37 +20,40 @@ if (localStorageFavoriteData && localStorageFavoriteData !== '[]') {
   const parsedData = JSON.parse(localStorageFavoriteData);
   const favoriteMarkup = parsedData
     .map(element => {
-      return element.markup;
+      return renderNews.renderNewsCard(element, 'hidden-span');
     })
     .join('');
   favoriteNewsList.innerHTML = favoriteMarkup;
 }
-
-
 localStorageFavoriteData = JSON.parse(localStorageFavoriteData); //  массив эелементов
 
 
-function onClick(e) {
-  // при клике на add to favorite
 
+function onClick(e) {
+  // при клике на add to favorite на странице favorite
   if (
     !e.target.closest('button')
   ) {
     return;
   }
   const choosenNews = e.target.closest('.list-news__item'); // лишка
-  const id = choosenNews.dataset.id;
+  const elemURL = choosenNews
+    .querySelector('.item-news__info-link')
+    .getAttribute('href');
+  
   e.target // toggle class
     .closest('.item-news__add-to-favorite')
     .classList.toggle('hidden-span');
 
-  const idX = localStorageFavoriteData.findIndex(item => item.id === id); // id элемента по которому кликнули
-  localStorageFavoriteData.splice(idX, 1); // удаление этого эелемента из массива
+  const indexOfURL = localStorageFavoriteData.findIndex(
+    item => item.url === elemURL,
+  ); // поиск индекса элемента с данным url
+  localStorageFavoriteData.splice(indexOfURL, 1); // удаление этого эелемента из массива
   localStorage.setItem('favorite', JSON.stringify(localStorageFavoriteData)); // добавление массива в LS
   if (localStorageFavoriteData.length) {
     const favoriteMarkup = localStorageFavoriteData
       .map(element => {
-        return element.markup;
+        return renderNews.renderNewsCard(element, 'hidden-span');
       })
       .join('');
     favoriteNewsList.innerHTML = favoriteMarkup;

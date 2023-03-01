@@ -1,8 +1,19 @@
 import './js/dark-light_theme';
+import FetchNews from './js/fetchNews';
+import RenderNews from './js/renderNews';
+import LocalStorageClass from './js/localStorage';
 
+const renderNews = new RenderNews();
+const fetchNews = new FetchNews();
+const localStorageEntity = new LocalStorageClass();
 const readNewsList = document.querySelector('.list-news');
 const oneDayNews = document.querySelector('.date-list__item');
 
+
+readNewsList.addEventListener(
+  'click',
+  localStorageEntity.onAddToFavoriteClick.bind(localStorageEntity),
+);
 oneDayNews.addEventListener('click', onDayClick);
 
 function onDayClick(e) {
@@ -16,11 +27,25 @@ function onDayClick(e) {
 let localStorageReadData = localStorage.getItem('read');
 if (localStorageReadData && localStorageReadData.length) {
   const parsedData = JSON.parse(localStorageReadData); // распарсенніе данные (массив объектов)
-  const readMarkup = parsedData
-    .map(element => {
-      return element.markup;
-      // console.log(element.markup);
-    })
-    .join('');
+  console.log(parsedData);
+
+ const favoriteArr = JSON.parse(localStorage.getItem('favorite'));
+ let readMarkup;
+ if (!favoriteArr || favoriteArr === '[]') {
+   readMarkup = parsedData
+     .map(element => {
+       return renderNews.renderNewsCard(element);
+     })
+     .join('');
+ } else {
+   const urlArr = favoriteArr.map(elem => elem.url);
+   readMarkup = parsedData.map(news => {
+     if (urlArr.includes(news.url)) {
+       return renderNews.renderNewsCard(news, 'hidden-span');
+     } else {
+       return renderNews.renderNewsCard(news);
+     }
+   });
+ }
   readNewsList.innerHTML = readMarkup;
 }
