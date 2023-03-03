@@ -15,3 +15,4 @@ homeLinkEl.classList.remove('navbar__link--current');
 readMobileLinkEl.classList.add('navbar-mobile__link--current');
 homeMobileLinkEl.classList.remove('navbar-mobile__link--current');
 favoriteMobileLinkEl.classList.remove('navbar-mobile__link--current');
+

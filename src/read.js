@@ -1,15 +1,5 @@
-import './js/dark-light_theme';
 import RenderNews from './js/renderNews';
 import LocalStorageClass from './js/localStorage';
-
-
-
-// // -----------------------------------------------------------------
-// import './js/pagination';
-// const Pagination = require('tui-pagination');
-// import { pagination } from './js/pagination';
-
-// -----------------------------------------------------------------
 
 
 const renderNews = new RenderNews();

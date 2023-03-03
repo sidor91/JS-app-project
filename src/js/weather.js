@@ -1,7 +1,3 @@
-import RenderNews from "./renderNews";
-
-const renderNews = new RenderNews();
-
 
 export default class Weather {
   constructor() {

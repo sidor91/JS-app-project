@@ -1,3 +1,4 @@
+
 const daysTag = document.querySelector('.days'),
     currentDate = document.querySelector('.current-date'),
     prevNextIcon = document.querySelectorAll('.calendar-icons span');
@@ -23,7 +24,10 @@ let date = new Date(),
         calendarBtn: document.querySelector('.calendar__button-calendar'),
     };
 
-    refs.openModalBtn.addEventListener('click', toggleModal);
+    if (refs.openModalBtn) {
+      refs.openModalBtn.addEventListener('click', toggleModal);
+    }
+        
     document.addEventListener('click', hideModals);
     //   function cleanInput() {
     //     refs.input.classList.remove('isActive');
@@ -68,7 +72,7 @@ const months = [
     'November',
     'December',
 ];
-const renderCalendar = number => {
+export const renderCalendar = number => {
     let firstDayofMonth = new Date(currYear, currMonth, 1).getDay(), // getting first day of month
         lastDateofMonth = new Date(currYear, currMonth + 1, 0).getDate(), // getting last date of month
         lastDayofMonth = new Date(currYear, currMonth, lastDateofMonth).getDay(), // getting last day of month
@@ -96,56 +100,66 @@ const renderCalendar = number => {
         liTag += `<li style="color: silver" class="inactive">${i - lastDayofMonth + 1}</li>`;
     }
 
-
-
-
-    currentDate.innerText = `${months[currMonth]} ${currYear}`; // passing current mon and yr as currentDate text
-    daysTag.innerHTML = liTag;
+    if (currentDate) {
+        currentDate.innerText = `${months[currMonth]} ${currYear}`;
+    }
+    if (daysTag) {
+         daysTag.innerHTML = liTag;
+    }
+      // passing current mon and yr as currentDate text
+     
     // console.log(liTag);
     const dayChange = document.querySelector('.days');
     // function addChangingDayListener() {
 
-    dayChange.addEventListener('click', evt => {
-        //evt.preventDefault();
-        // evt.target.classList.toggle('active');
+    if (dayChange) {
+        dayChange.addEventListener('click', evt => {
+          //evt.preventDefault();
+          // evt.target.classList.toggle('active');
 
-        //     function hideButton() {
-        //       if (showButton() && evt.target.contains('active')) {
-        //         // evt.target.classList.remove('active');
-        //       }
-        //     }
-        [...evt.currentTarget.children].forEach(item => {
+          //     function hideButton() {
+          //       if (showButton() && evt.target.contains('active')) {
+          //         // evt.target.classList.remove('active');
+          //       }
+          //     }
+          [...evt.currentTarget.children].forEach(item => {
             item.classList.remove('active');
             //console.log(item.textContent);
-        });
+          });
 
-        evt.target.classList.add('active');
-        let newValueDay = evt.target.textContent;
-        if (evt.target.textContent.length > 10) {
+          evt.target.classList.add('active');
+          let newValueDay = evt.target.textContent;
+          if (evt.target.textContent.length > 10) {
             return;
-        }
-        let month = (currMonth + 1).toString();
-        document.getElementById('input-picker').value =
+          }
+          let month = (currMonth + 1).toString();
+          document.getElementById('input-picker').value =
             currYear +
             '/' +
             month.padStart(2, '0') +
             '/' +
             newValueDay.padStart(2, '0');
 
-        localStorage.setItem('VALUE', JSON.stringify(newValueDay));
+          localStorage.setItem('VALUE', JSON.stringify(newValueDay));
 
-        let inputDateValue = document.querySelector('.calendar-input').value;
-        // console.log(inputDateValue);
-        localStorage.setItem('date', JSON.stringify(inputDateValue));
-        document.querySelector('[data-modal]').classList.add('is-hidden-wrapper');
-        document.querySelector('.calendar-input').classList.remove('isActive');
-        document
+          let inputDateValue = document.querySelector('.calendar-input').value;
+          // console.log(inputDateValue);
+          localStorage.setItem('date', JSON.stringify(inputDateValue));
+          document
+            .querySelector('[data-modal]')
+            .classList.add('is-hidden-wrapper');
+          document
+            .querySelector('.calendar-input')
+            .classList.remove('isActive');
+          document
             .querySelector('.calendar__button-arrow')
             .classList.remove('switched');
-        document
+          document
             .querySelector('.calendar__button-calendar')
             .classList.remove('switchedColor');
-    });
+        });
+    }
+    
     //}
 };
 
@@ -186,10 +200,3 @@ localStorage.removeItem('date');
 
 // відкиває інші категорії
 
-const otherEl = document.querySelector('.category__others-container');
-
-otherEl.addEventListener('click', onClickOther);
-
-function onClickOther(evt) {
-    evt.currentTarget.classList.toggle('is-open');
-}

@@ -1,10 +1,3 @@
-// import RenderNews from '../renderNews';
-
-// const favoriteNewsList = document.querySelector('#favorite__news');
-
-
-
-
 
 export default class LocalStorageClass {
   constructor() {
